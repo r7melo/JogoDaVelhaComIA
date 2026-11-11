@@ -1,0 +1,53 @@
+<ButtonMenu>:
+    background_normal: ""
+    background_down: ""
+    background_color: 0, 0, 0, 0
+    font_size: "20sp"
+    bold: True
+    color: 1, 1, 1, 1
+    canvas.before:
+        Color:
+            rgba: (0.12, 0.40, 0.75, 1) if self.state == "down" else (0.2, 0.6, 1, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [12]
+
+
+<ButtonControll>:
+    background_normal: ""
+    background_down: ""
+    background_color: 0, 0, 0, 0
+    font_size: "64sp"
+    bold: True
+    color: (1, 0.4, 0.4, 1) if self.text == "X" else (0.3, 0.8, 1, 1)
+    canvas.before:
+        Color:
+            rgba: (0.2, 0.23, 0.32, 1) if self.state == "down" else (0.15, 0.17, 0.25, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [10]
+
+<TitleGame>:
+    font_size: "48sp"
+    bold: True
+    color: 0.2, 0.7, 1, 1
+
+<Status>:
+    font_size: "22sp"
+    color: 0.8, 0.85, 1, 1
+
+<BackgroundScreen>:
+    canvas.before:
+        Color:
+            rgba: 0.08, 0.09, 0.14, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<BarTopScreen>:
+    size_hint_y: None
+    height: "50dp"
+    padding: 5
+    spacing: 10
