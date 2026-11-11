@@ -19,10 +19,6 @@ class GameScreen(Screen):
         self.controll = Controll()
         self.mode = "PVP"
 
-        self.player1: IPlayer = None
-        self.player2: IPlayer = None
-
-
         background_screen = BackgroundScreen(orientation="vertical", padding=10, spacing=10)
 
         bar_menu = BarTopScreen()
@@ -53,6 +49,19 @@ class GameScreen(Screen):
         self.add_widget(background_screen)
 
     def update_game(self, dt):
+        
+        self.controll.update(self.board.all_cells())
+
+        self.status.text = f"Vez do {self.current_player.__str__()}"
+
+        has_winner, winner = self.board.has_winner()
+        if has_winner:
+            self.status.text = f"{self.current_player.__str__()} venceu!"
+            self.on_leave()
+
+        elif self.board.is_end_game():
+            self.status.text = "Empate!"
+            self.on_leave()
 
         if self.current_player.status == PlayerStatus.START:
             threading.Thread(target=self.current_player.player_playing, daemon=True).start()
@@ -64,19 +73,6 @@ class GameScreen(Screen):
             self.next_player.status = PlayerStatus.WAITING
 
             print(self.board.all_cells())
-        
-        self.controll.update(self.board.all_cells())
-
-        self.status.text = f"Vez do {self.current_player.symbol}"
-
-        has_winner, winner = self.board.has_winner()
-        if has_winner:
-            self.status.text = f"{winner} venceu!"
-            self.on_leave()
-
-        elif self.board.is_end_game():
-            self.status.text = "Empate!"
-            self.on_leave()
 
     def on_release_btn_reset(self, *_):
         self.board.reset_game()

@@ -3,6 +3,7 @@ from board import Board
 from players.i_player import IPlayer, PlayerStatus
 from controll import Controll
 from time import sleep
+from models.alpha_beta import AlphaBeta
 
 class PlayerAlphaBeta(IPlayer):
     def __init__(self, symbol: str, board: Board, controll: Controll) -> None:
@@ -15,15 +16,15 @@ class PlayerAlphaBeta(IPlayer):
         self.board.set_play(decision, self.symbol)
 
     def player_playing(self) -> None:
+        
+        decision = AlphaBeta(self.board, self.symbol).best_decision()
 
-
-        self.board.get_cells() 
-        decision = self.board.get_cells()[-1] 
         print(f"Player {self.symbol} selected position {decision}")
-
-        sleep(2)
 
 
         self.set_decision(decision)
 
         self.status = PlayerStatus.FINISHED
+
+    def __str__(self):
+        return "AlphaBeta"

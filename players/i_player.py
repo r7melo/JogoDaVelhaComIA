@@ -36,3 +36,7 @@ class IPlayer(ABC):
     @abstractmethod
     def player_playing(self) -> None:
         pass
+
+    @abstractmethod
+    def __str__(self):
+        pass

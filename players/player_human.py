@@ -30,4 +30,7 @@ class PlayerHuman(IPlayer):
 
         while self.decision is None:
             sleep(0.1)
+
+    def __str__(self):
+        return f"Jogador {self.symbol}"
             
