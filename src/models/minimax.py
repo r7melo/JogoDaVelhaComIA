@@ -1,80 +1,72 @@
-
 import math
-from src.board import Board, SYMBOL_VOID
+from dataclasses import dataclass
+from time import perf_counter
+
+from src.board import Board
+
+
+@dataclass
+class Decision:
+    position: int
+    value: int
+    nodes: int
+    time_ms: float
+
+
+def opponent(symbol: str) -> str:
+    return "O" if symbol == "X" else "X"
 
 
 class Minimax:
-
-    def __init__(self, board: Board, symbol: str):
+    def __init__(self, board: Board, symbol: str, reverse: bool = False):
         self.board = board.copy_state()
         self.AGENT = symbol
-        self.ADVERSARY = "X" if symbol == "O" else "O"
+        self.reverse = reverse
+        self.nodes = 0
 
-    def search(self, board: Board, maximizing: bool):
+    def moves(self, board: Board) -> list:
+        cells = board.get_cells()
+        return cells[::-1] if self.reverse else cells
 
+    def utility(self, board: Board):
         winner = board.get_winner()
+        if winner == "X":
+            return 1
+        if winner == "O":
+            return -1
+        if board.is_end_game():
+            return 0
+        return None
 
-        if winner == self.AGENT: return 1
-        if winner == self.ADVERSARY: return -1
-        if board.is_end_game() : return 0
+    def search(self, board: Board, player: str) -> int:
+        self.nodes += 1
 
-        if maximizing:
+        u = self.utility(board)
+        if u is not None:
+            return u
 
-            best_score = -math.inf
+        best = -math.inf if player == "X" else math.inf
+        for pos in self.moves(board):
+            child = board.copy_state()
+            child.set_play(pos, player)
+            value = self.search(child, opponent(player))
+            best = max(best, value) if player == "X" else min(best, value)
+        return best
 
-            for i in range(9):
+    def best_decision(self) -> Decision:
+        self.nodes = 0
+        start = perf_counter()
 
-                if board.get_symbol(i) == SYMBOL_VOID:
-
-                    new_board = board.copy_state()
-
-                    new_board.set_play(i, self.AGENT)
-
-                    score = self.search(new_board, False)
-
-                    best_score = max(best_score, score)
-
-            return best_score
-
-        else:
-
-            best_score = math.inf
-
-            for i in range(9):
-
-                if board.get_symbol(i) == SYMBOL_VOID:
-
-                    # Criar estado independente
-                    new_board = board.copy_state()
-
-                    # Simular jogada do adversário
-                    new_board.set_play(i, self.ADVERSARY)
-
-                    # Avaliar próxima jogada
-                    score = self.search(new_board, True)
-
-                    best_score = min(best_score, score)
-
-            return best_score
-
-    def best_decision(self):
-
-        best_score = -math.inf
+        maximizing = self.AGENT == "X"
+        best_value = -math.inf if maximizing else math.inf
         best_pos = -1
 
-        for i in range(9):
+        for pos in self.moves(self.board):
+            child = self.board.copy_state()
+            child.set_play(pos, self.AGENT)
+            value = self.search(child, opponent(self.AGENT))
+            if (maximizing and value > best_value) or (not maximizing and value < best_value):
+                best_value, best_pos = value, pos
 
-            if self.board.get_symbol(i) == SYMBOL_VOID:
-
-                # Simular jogada inicial
-                new_board = self.board.copy_state()
-                new_board.set_play(i, self.AGENT)
-
-                # Avaliar possibilidades futuras
-                score = self.search(new_board, False)
-
-                if score > best_score:
-                    best_score = score
-                    best_pos = i
-
-        return best_pos
+        elapsed = (perf_counter() - start) * 1000
+        return Decision(best_pos, best_value, self.nodes, elapsed)

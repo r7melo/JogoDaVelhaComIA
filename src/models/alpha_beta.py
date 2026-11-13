@@ -1,94 +1,60 @@
-
 import math
-from src.board import Board, SYMBOL_VOID
+from time import perf_counter
+
+from src.board import Board
+from src.models.minimax import Minimax, Decision, opponent
 
 
-class AlphaBeta:
+class AlphaBeta(Minimax):
 
-    def __init__(self, board: Board, symbol: str):
-        self.board = board.copy_state()
-        self.AGENT = symbol
-        self.ADVERSARY = "X" if symbol == "O" else "O"
+    def search(self, board: Board, player: str,
+               alpha: float = -math.inf, beta: float = math.inf) -> int:
+        self.nodes += 1
 
-    def search(
-        self,
-        board: Board,
-        maximizing: bool,
-        alpha: float = -math.inf,
-        beta: float = math.inf
-    ):
+        u = self.utility(board)
+        if u is not None:
+            return u
 
-        winner = board.get_winner()
-
-        if winner == self.AGENT:
-            return 1
-
-        if winner == self.ADVERSARY:
-            return -1
-
-        if board.is_end_game():
-            return 0
-
-        if maximizing:
-
-            best_score = -math.inf
-
-            for i in range(9):
-
-                new_board = board.copy_state()
-
-                if new_board.set_play(i, self.AGENT):
-
-                    score = self.search(new_board, False, alpha, beta)
-
-                    best_score = max(best_score, score)
-                    alpha = max(alpha, best_score)
-
-                    if alpha >= beta:
-                        break
-
-            return best_score
-
+        if player == "X":
+            best = -math.inf
+            for pos in self.moves(board):
+                child = board.copy_state()
+                child.set_play(pos, player)
+                best = max(best, self.search(child, opponent(player), alpha, beta))
+                alpha = max(alpha, best)
+                if alpha >= beta:
+                    break
+            return best
         else:
+            best = math.inf
+            for pos in self.moves(board):
+                child = board.copy_state()
+                child.set_play(pos, player)
+                best = min(best, self.search(child, opponent(player), alpha, beta))
+                beta = min(beta, best)
+                if alpha >= beta:
+                    break
+            return best
 
-            best_score = math.inf
+    def best_decision(self) -> Decision:
+        self.nodes = 0
+        start = perf_counter()
 
-            for i in range(9):
-
-                new_board = board.copy_state()
-
-                if new_board.set_play(i, self.ADVERSARY):
-
-                    score = self.search(new_board, True, alpha, beta)
-
-                    best_score = min(best_score, score)
-                    beta = min(beta, best_score)
-
-                    if alpha >= beta:
-                        break
-
-            return best_score
-
-    def best_decision(self):
-
-        best_score = -math.inf
+        maximizing = self.AGENT == "X"
+        best_value = -math.inf if maximizing else math.inf
         best_pos = -1
+        alpha, beta = -math.inf, math.inf
 
-        alpha = -math.inf
-        beta = math.inf
+        for pos in self.moves(self.board):
+            child = self.board.copy_state()
+            child.set_play(pos, self.AGENT)
+            value = self.search(child, opponent(self.AGENT), alpha, beta)
+            if (maximizing and value > best_value) or (not maximizing and value < best_value):
+                best_value, best_pos = value, pos
+            if maximizing:
+                alpha = max(alpha, best_value)
+            else:
+                beta = min(beta, best_value)
 
-        for i in range(9):
-
-            new_board = self.board.copy_state()
-
-            if new_board.set_play(i, self.AGENT):
-
-                score = self.search(new_board, False, alpha, beta)
-
-                if score > best_score:
-                    best_score = score
-                    best_pos = i
-
-                alpha = max(alpha, best_score)
-
-        return best_pos
+        elapsed = (perf_counter() - start) * 1000
+        return Decision(best_pos, best_value, self.nodes, elapsed)

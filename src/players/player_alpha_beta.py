@@ -2,12 +2,11 @@ from typing import Optional
 from src.board import Board
 from src.players.i_player import IPlayer, PlayerStatus
 from src.controll import Controll
-from time import sleep
 from src.models.alpha_beta import AlphaBeta
 
 class PlayerAlphaBeta(IPlayer):
     def __init__(self, symbol: str, board: Board, controll: Controll) -> None:
-                super().__init__(symbol, board, controll)
+        super().__init__(symbol, board, controll)
     
     def get_decision(self) -> Optional[int]:
         pass
@@ -16,15 +15,13 @@ class PlayerAlphaBeta(IPlayer):
         self.board.set_play(decision, self.symbol)
 
     def player_playing(self) -> None:
-        
-        decision = AlphaBeta(self.board, self.symbol).best_decision()
 
-        #print(f"Player {self.symbol} selected position {decision}")
-
-
-        self.set_decision(decision)
-
+        d = AlphaBeta(self.board, self.symbol).best_decision()
+        self.last_decision = d
+        self.set_decision(d.position)
         self.status = PlayerStatus.FINISHED
 
+        print(f"Alpha-Beta: symbol={self.symbol}, pos={d.position}, valor={d.value:+.1f}, nos={d.nodes}, tempo={d.time_ms:.2f} ms")
+        
     def __str__(self):
         return "AlphaBeta"
