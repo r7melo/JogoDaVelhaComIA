@@ -6,8 +6,8 @@ from gui import *
 from players.i_player import IPlayer, PlayerStatus, PlayerStatus
 from players.player_alpha_beta import PlayerAlphaBeta
 from players.player_human import PlayerHuman
-from controll import Controll
 from players.player_minimax import PlayerMinimax
+from controll import Controll
 
 class GameScreen(Screen):
     def __init__(self, **kw):
@@ -83,21 +83,21 @@ class GameScreen(Screen):
         self.manager.current = "menu"
 
     def on_enter(self, *_):
-        
-        if self.mode == "PVP":
-            self.current_player: IPlayer = PlayerHuman("X", self.board, self.controll)
-            self.next_player: IPlayer = PlayerHuman("O", self.board, self.controll)
 
-        elif self.mode == "PVM":
-            self.current_player: IPlayer = PlayerHuman("X", self.board, self.controll)
-            self.next_player: IPlayer = PlayerMinimax("O", self.board, self.controll)
+        x, o = self.mode["X"], self.mode["O"]
 
-        elif self.mode == "PVA":
+        if x == "Player":
             self.current_player: IPlayer = PlayerHuman("X", self.board, self.controll)
-            self.next_player: IPlayer = PlayerAlphaBeta("O", self.board, self.controll)
-
-        elif self.mode == "MVA":
+        if x == "Minimax":
             self.current_player: IPlayer = PlayerMinimax("X", self.board, self.controll)
+        if x == "Alpha-Beta":
+            self.current_player: IPlayer = PlayerAlphaBeta("X", self.board, self.controll)
+
+        if o == "Player":
+            self.next_player: IPlayer = PlayerHuman("O", self.board, self.controll)
+        if o == "Minimax":
+            self.next_player: IPlayer = PlayerMinimax("O", self.board, self.controll)
+        if o == "Alpha-Beta":
             self.next_player: IPlayer = PlayerAlphaBeta("O", self.board, self.controll)
 
         self._loop = Clock.schedule_interval(self.update_game, 1 / 30)

@@ -51,3 +51,35 @@
     height: "50dp"
     padding: 5
     spacing: 10
+
+<SpinnerMenu>:
+    background_normal: ""
+    background_down: ""
+    background_color: 0, 0, 0, 0
+    font_size: "18sp"
+    bold: True
+    color: 1, 1, 1, 1
+    option_cls: "SpinnerMenuOption"
+    canvas.before:
+        Color:
+            rgba: (0.12, 0.40, 0.75, 1) if self.state == "down" else (0.2, 0.6, 1, 1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [12]
+
+
+<SpinnerMenuOption>:
+    background_normal: ""
+    background_down: ""
+    background_color: 0, 0, 0, 0
+    font_size: "18sp"
+    color: 1, 1, 1, 1
+    size_hint_y: None
+    height: "44dp"
+    canvas.before:
+        Color:
+            rgba: (0.2, 0.23, 0.32, 1) if self.state == "down" else (0.15, 0.17, 0.25, 1)
+        Rectangle:
+            pos: self.pos
+            size: self.size

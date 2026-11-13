@@ -1,6 +1,7 @@
-from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen, SlideTransition
-from gui import BackgroundScreen, TitleGame, ButtonMenu
+from gui import *
 
 class MenuScreen(Screen):
     def __init__(self, **kw):
@@ -8,32 +9,41 @@ class MenuScreen(Screen):
         background_screen = BackgroundScreen(orientation="vertical", padding=60, spacing=20)
         background_screen.add_widget(TitleGame(text="Jogo da Velha"))
 
-        btn_play_pvp = ButtonMenu(text="Player vs Player")
-        btn_play_pvp.mode = "PVP"
-        btn_play_pvp.bind(on_release=self.go_game)
+        # Labels X e O em cima
+        labels_row = BoxLayout(orientation="horizontal", spacing=40)
+        labels_row.add_widget(Label(text="X", font_size=64, bold=True))
+        labels_row.add_widget(Label(text="O", font_size=64, bold=True))
+        background_screen.add_widget(labels_row)
 
-        btn_play_pvm = ButtonMenu(text="Player vs Minimax")
-        btn_play_pvm.mode = "PVM"
-        btn_play_pvm.bind(on_release=self.go_game)
+        # Spinners embaixo
+        spinners_row = BoxLayout(orientation="horizontal", spacing=40, size_hint=(1, None), height=50)
+        self.spinner_x = SpinnerMenu(
+            text="Player",
+            values=["Player", "Minimax", "Alpha-Beta"],
+        )
+        self.spinner_o = SpinnerMenu(
+            text="Player",
+            values=["Player", "Minimax", "Alpha-Beta"],
+        )
+        spinners_row.add_widget(self.spinner_x)
+        spinners_row.add_widget(self.spinner_o)
+        background_screen.add_widget(spinners_row)
 
-        btn_play_pva = ButtonMenu(text="Player vs Alpha-Beta")
-        btn_play_pva.mode = "PVA"
-        btn_play_pva.bind(on_release=self.go_game)
+        # Botão Play
+        btn_play = ButtonMenu(text="Play")
+        btn_play.bind(on_release=self.go_game)
+        background_screen.add_widget(btn_play)
 
-        btn_play_mva = ButtonMenu(text="Minimax vs Alpha-Beta")
-        btn_play_mva.mode = "MVA"
-        btn_play_mva.bind(on_release=self.go_game)
-
-        background_screen.add_widget(btn_play_pvp)
-        background_screen.add_widget(btn_play_pvm)
-        background_screen.add_widget(btn_play_pva)
-        background_screen.add_widget(btn_play_mva)
         self.add_widget(background_screen)
-
+        
     def go_game(self, instance):
 
         game_screen = self.manager.get_screen("game")
-        game_screen.mode = instance.mode
+
+        game_screen.mode = {
+            "X": self.spinner_x.text,
+            "O": self.spinner_o.text,
+        }
 
         self.manager.transition = SlideTransition(direction="left")
         self.manager.current = "game"
