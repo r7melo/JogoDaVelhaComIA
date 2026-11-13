@@ -1,0 +1,11 @@
+Estado,Jogador_da_vez,Algoritmo,Jogada,Valor,Nos,Tempo_medio_ms
+E1,X,Minimax,0,0,549945,1329.7536
+E1,X,Alfa-beta,0,0,18296,44.2625
+E2,O,Minimax,0,0,55504,125.5877
+E2,O,Alfa-beta,0,0,2315,5.5117
+E3,X,Minimax,1,0,7331,17.0896
+E3,X,Alfa-beta,1,0,843,2.0443
+E4,X,Minimax,6,1,156,0.3756
+E4,X,Alfa-beta,6,1,59,0.1498
+E5,X,Minimax,6,1,7,0.0188
+E5,X,Alfa-beta,6,1,5,0.03
