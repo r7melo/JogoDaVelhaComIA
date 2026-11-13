@@ -81,5 +81,7 @@ python benchmark.py
 
 ![](imgs/menu.png)
 
+![](imgs/menu2.png)
+
 ![](imgs/game.png)
 
