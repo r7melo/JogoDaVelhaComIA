@@ -20,7 +20,7 @@ class PlayerHuman(IPlayer):
             return
         
         if self.status == PlayerStatus.PLAYING and self.board.valide_play(decision):
-            print(f"Player {self.symbol} selected position {decision}")
+            #print(f"Player {self.symbol} selected position {decision}")
             self.decision = decision
             self.board.set_play(self.decision, self.symbol)
             self.decision = None

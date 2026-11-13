@@ -20,7 +20,7 @@ class PlayerMinimax(IPlayer):
 
         decision = Minimax(self.board, self.symbol).best_decision()
 
-        print(f"Player {self.symbol} selected position {decision}")
+        #print(f"Player {self.symbol} selected position {decision}")
 
 
         self.set_decision(decision)

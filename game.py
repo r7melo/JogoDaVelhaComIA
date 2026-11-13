@@ -72,7 +72,7 @@ class GameScreen(Screen):
             self.current_player.status = PlayerStatus.START
             self.next_player.status = PlayerStatus.WAITING
 
-            print(self.board.all_cells())
+            #print(self.board.all_cells())
 
     def on_release_btn_reset(self, *_):
         self.board.reset_game()
