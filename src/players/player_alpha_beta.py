@@ -1,9 +1,9 @@
 from typing import Optional
-from board import Board
-from players.i_player import IPlayer, PlayerStatus
-from controll import Controll
+from src.board import Board
+from src.players.i_player import IPlayer, PlayerStatus
+from src.controll import Controll
 from time import sleep
-from models.alpha_beta import AlphaBeta
+from src.models.alpha_beta import AlphaBeta
 
 class PlayerAlphaBeta(IPlayer):
     def __init__(self, symbol: str, board: Board, controll: Controll) -> None:

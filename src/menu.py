@@ -1,7 +1,7 @@
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.label import Label
 from kivy.uix.screenmanager import Screen, SlideTransition
-from gui import *
+from src.gui import *
 
 class MenuScreen(Screen):
     def __init__(self, **kw):

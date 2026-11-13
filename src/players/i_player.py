@@ -1,11 +1,11 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from controll import Controll
+    from src.controll import Controll
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from board import Board 
+from src.board import Board 
 from typing import Optional
 
 

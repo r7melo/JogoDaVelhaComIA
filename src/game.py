@@ -1,13 +1,16 @@
 import threading
 
 from kivy.uix.screenmanager import Clock, Screen, SlideTransition
-from board import Board
-from gui import *
-from players.i_player import IPlayer, PlayerStatus, PlayerStatus
-from players.player_alpha_beta import PlayerAlphaBeta
-from players.player_human import PlayerHuman
-from players.player_minimax import PlayerMinimax
-from controll import Controll
+from src.board import Board
+from src.gui import *
+from src.players.i_player import IPlayer, PlayerStatus, PlayerStatus
+from src.players.player_alpha_beta import PlayerAlphaBeta
+from src.players.player_human import PlayerHuman
+from src.players.player_minimax import PlayerMinimax
+from src.controll import Controll
+
+PLAYERS = {"Player": PlayerHuman, "Minimax": PlayerMinimax, "Alpha-Beta": PlayerAlphaBeta}
+
 
 class GameScreen(Screen):
     def __init__(self, **kw):
@@ -64,8 +67,8 @@ class GameScreen(Screen):
             self.on_leave()
 
         if self.current_player.status == PlayerStatus.START:
-            threading.Thread(target=self.current_player.player_playing, daemon=True).start()
             self.current_player.status = PlayerStatus.PLAYING
+            threading.Thread(target=self.current_player.player_playing, daemon=True).start()
 
         if self.current_player.status == PlayerStatus.FINISHED:
             self.current_player, self.next_player = self.next_player, self.current_player
@@ -82,34 +85,25 @@ class GameScreen(Screen):
         self.manager.transition = SlideTransition(direction="right")
         self.manager.current = "menu"
 
-    def on_enter(self, *_):
-
-        x, o = self.mode["X"], self.mode["O"]
-
-        if x == "Player":
-            self.current_player: IPlayer = PlayerHuman("X", self.board, self.controll)
-        if x == "Minimax":
-            self.current_player: IPlayer = PlayerMinimax("X", self.board, self.controll)
-        if x == "Alpha-Beta":
-            self.current_player: IPlayer = PlayerAlphaBeta("X", self.board, self.controll)
-
-        if o == "Player":
-            self.next_player: IPlayer = PlayerHuman("O", self.board, self.controll)
-        if o == "Minimax":
-            self.next_player: IPlayer = PlayerMinimax("O", self.board, self.controll)
-        if o == "Alpha-Beta":
-            self.next_player: IPlayer = PlayerAlphaBeta("O", self.board, self.controll)
-
-        self._loop = Clock.schedule_interval(self.update_game, 1 / 30)
-        self.current_player.status = PlayerStatus.START   
-        self.next_player.status = PlayerStatus.WAITING
-
-
-    def on_leave(self, *_):
+    def _stop_loop(self):
         if self._loop:
             self._loop.cancel()
             self._loop = None
-            self.current_player.status = PlayerStatus.WAITING
+
+    def on_enter(self, *_):
+        self._stop_loop()
+        self.controll.on_cell = None
+        self.board = Board()
+        self.controll.update(self.board.all_cells())
+        self.current_player = PLAYERS[self.mode["X"]]("X", self.board, self.controll)
+        self.next_player = PLAYERS[self.mode["O"]]("O", self.board, self.controll)
+        self.current_player.status = PlayerStatus.START
+        self._loop = Clock.schedule_interval(self.update_game, 1 / 30)
+
+    def on_leave(self, *_):
+        self._stop_loop()
+
+    
         
 
 

@@ -1,9 +1,9 @@
 from typing import Optional
-from board import Board
-from controll import Controll
-from players.i_player import IPlayer, PlayerStatus
+from src.board import Board
+from src.controll import Controll
+from src.players.i_player import IPlayer, PlayerStatus
 from time import sleep
-from models.minimax import Minimax
+from src.models.minimax import Minimax
 
 class PlayerMinimax(IPlayer):
     def __init__(self, symbol: str, board: Board, controll: Controll) -> None:

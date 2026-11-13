@@ -1,6 +1,6 @@
 
 import math
-from board import Board, SYMBOL_VOID
+from src.board import Board, SYMBOL_VOID
 
 
 class Minimax:
