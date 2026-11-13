@@ -14,8 +14,8 @@ class Minimax:
 
         winner = board.get_winner()
 
-        if winner == self.AGENT: return 10
-        if winner == self.ADVERSARY: return -10
+        if winner == self.AGENT: return 1
+        if winner == self.ADVERSARY: return -1
         if board.is_end_game() : return 0
 
         if maximizing:
